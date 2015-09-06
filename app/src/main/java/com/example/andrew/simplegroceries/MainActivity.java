@@ -33,6 +33,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -61,6 +62,7 @@ public class MainActivity extends ListActivity {
         if (testData.currentList == FoodData.Status.HAVE) {
             title.setText("Stuff I have");
             setListAdapter(stuffIHaveAdapter);
+
             currentAdapter = stuffIHaveAdapter;
             textMoveTo.setText("Move to Stuff I Need");
             listNeed = false;
@@ -253,7 +255,8 @@ public class MainActivity extends ListActivity {
         }
     }
 
-    public void addFood(View view) {
+    // Needs to be organized into a separate file
+    public void openAddFoodDialgoue(View view) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.add_food);

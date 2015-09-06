@@ -9,6 +9,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -59,6 +60,7 @@ public class FoodData implements Serializable {
 
     public void addHave(String x) {
         stuffIHave.add(new Food(x));
+        sortHaveByRating();
     }
 
     public byte[] convertToBytes() throws IOException {
@@ -188,6 +190,13 @@ public class FoodData implements Serializable {
         }
 
 
+    }
+
+    // sort stuff I have by descending order, so food that most likely needs to be purchased is
+    // at the top
+    public void sortHaveByRating(){
+        Collections.sort(stuffIHave);
+        Collections.reverse(stuffIHave);
     }
 
 }

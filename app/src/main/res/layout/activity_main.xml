@@ -38,7 +38,7 @@
         android:text="+"
         android:id="@+id/button_new_food"
         android:clickable="true"
-        android:onClick="addFood"
+        android:onClick="openAddFoodDialgoue"
         android:layout_alignEnd="@android:id/list" />
 
     <Button
