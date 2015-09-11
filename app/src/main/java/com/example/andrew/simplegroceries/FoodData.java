@@ -1,5 +1,8 @@
 package com.example.andrew.simplegroceries;
 
+import com.example.andrew.simplegroceries.Undo.UndoStack;
+import com.example.andrew.simplegroceries.Undo.UserActions.ActionAddFood;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,6 +30,7 @@ public class FoodData implements Serializable {
     ArrayList<Food> stuffINeed;
     ArrayList<Food> stuffIHave;
     Status currentList;
+    UndoStack undoStack;
 
     public enum Status implements Serializable {
         NEED, HAVE;
@@ -37,29 +41,45 @@ public class FoodData implements Serializable {
         stuffINeed = new ArrayList<Food>();
         stuffIHave = new ArrayList<Food>();
         Status currentList = Status.NEED;
+        undoStack = new UndoStack();
+    }
+
+    //removes food from list
+    public void remove(Status list, Food food) {
+        if (list == Status.NEED) {
+            stuffINeed.remove(food);
+        } else
+            stuffIHave.remove(food);
     }
 
     public static FoodData deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-             ObjectInput in = new ObjectInputStream(bis)){
-            FoodData temp = (FoodData)in.readObject();
+             ObjectInput in = new ObjectInputStream(bis)) {
+            FoodData temp = (FoodData) in.readObject();
             return temp;
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     public void addNeed(String x) {
-        stuffINeed.add(new Food(x));
+        Food temp = new Food(x);
+        stuffINeed.add(temp);
+
+        //for undo
+        undoStack.pushAction(new ActionAddFood(Status.NEED, temp, this));
+
     }
 
     public void addHave(String x) {
-        stuffIHave.add(new Food(x));
+        Food temp = new Food(x);
+
+        //for undo
+        undoStack.pushAction(new ActionAddFood(Status.HAVE, temp, this));
+        stuffIHave.add(temp);
         sortHaveByRating();
     }
 
@@ -126,7 +146,7 @@ public class FoodData implements Serializable {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return this.foodName;
 
         }
@@ -194,7 +214,7 @@ public class FoodData implements Serializable {
 
     // sort stuff I have by descending order, so food that most likely needs to be purchased is
     // at the top
-    public void sortHaveByRating(){
+    public void sortHaveByRating() {
         Collections.sort(stuffIHave);
         Collections.reverse(stuffIHave);
     }

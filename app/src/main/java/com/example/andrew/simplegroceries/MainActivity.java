@@ -42,20 +42,13 @@ public class MainActivity extends ListActivity {
     FoodAdapter stuffIHaveAdapter;
     FoodAdapter stuffINeedAdapter;
     TextView title;
-    View foodList;
     Context parent;
     ListView listView;
     FoodAdapter currentAdapter;
     TextView textDelete;
     TextView textMoveTo;
-    boolean listNeed;
-    int x;
 
-    /* variables for swipeListener */
-    float historicX = Float.NaN, historyicY = Float.NaN;
-    static final int DELTA = 50;
 
-    enum Direction {LEFT, RIGHT}
 
 
     private void setTitle() {
@@ -65,13 +58,13 @@ public class MainActivity extends ListActivity {
 
             currentAdapter = stuffIHaveAdapter;
             textMoveTo.setText("Move to Stuff I Need");
-            listNeed = false;
+
         } else {
             title.setText("Stuff I need");
             setListAdapter(stuffINeedAdapter);
             currentAdapter = stuffINeedAdapter;
             textMoveTo.setText("Move to Stuff I Have");
-            listNeed = true;
+
         }
     }
 
@@ -184,6 +177,15 @@ public class MainActivity extends ListActivity {
 
         listView.setOnTouchListener(touchListener);
 
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        //pop off the undoStack.  If there's no action there, we'll
+        //go ahead and assume the user wants to exit
+        if(!testData.undoStack.undo())
+            super.onBackPressed();
 
     }
 
